@@ -1,6 +1,7 @@
 # 048 — Namespace-qualified static method calls
 
 **Status:** complete (2026-10-17); brief and implementation reviews accepted.
+Namespaced class constants, left as a gap here, are covered by [Task 052](052-namespaced-class-constants.md).
 **Type:** standard Smarty syntax gap.
 **Dependencies:** 009, 019.
 

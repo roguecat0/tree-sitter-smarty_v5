@@ -570,8 +570,9 @@ pairs with hand-authored trees and recorder projections:
 
 Rooted one-segment names, contextual and digit-prefixed segments, source ranges, the accepted
 space before `(`, separator-spacing errors, malformed recovery, and incremental
-qualification edits are checked in the same task. Namespaced standalone and
-class constants are Smarty-valid but remain unsupported syntax gaps. See [Task 048
+qualification edits are checked in the same task. Namespaced standalone
+constants are Smarty-valid but remain an unsupported syntax gap; namespaced
+class constants are covered by Task 052 below. See [Task 048
 trees](../test/corpus/namespaced-static-method-calls.txt), [Node checks](../test/namespaced-static-method-calls.test.mjs), and [implementation evidence](tasks/048-namespaced-static-method-calls.md#implementation-evidence).
 
 ## Task 051 conditional ternary expressions
@@ -601,3 +602,24 @@ with `$x=''`, `$a=0`, `$b='B'`, `$c='C'`, the expression renders `C`, and with
 by Smarty's recorder and compiler, but remain outside Task 051. See [Task 051
 trees](../test/corpus/ternary-expressions.txt), [reference/compiler/recovery/edit
 checks](../test/ternary-expressions.test.mjs), and [implementation evidence](tasks/051-ternary-expressions.md#implementation-evidence-2026-10-17).
+
+## Task 052 namespace-qualified class constants
+
+`class_constant_expression.class` accepts the Task 048 `qualified_name`; the
+node and its `constant` field are otherwise unchanged. Hand-authored trees and
+recorder projections verify:
+
+| Context | Minimized example | Verified ownership |
+| --- | --- | --- |
+| Output | `{App\Class1::CONSTANT}` / `{\Demo::VERSION}` | Output value is one constant; class spans all segments and separators. |
+| Modifier input/arguments | `{Demo\Assets::VERSION\|escape}` / `{$x\|replace:Demo\A::FROM:\Demo\A::TO}` | Constant is the complete modifier input or each argument. |
+| Conditions | `{if $s == App\State::READY}Y{elseif \App\State::DONE}D{/if}` | Comparison operand and whole elseif condition own the constant. |
+| Generic positional/named value | `{widget App\State::READY value=\App\State::READY\|escape}` | One positional argument and one named attribute value. |
+| Assignment, arithmetic | `{$x = App\State::READY}` / `{App\State::READY + 2 * \App\State::RATE}` | Assignment value; usual `*` over `+` precedence. |
+| Arguments, index, array | `{$u->find(App\State::ready, true)}` / `{$rows[App\State::READY]}` / `{[App\State::KEY=>\App\State::READY]}` | Argument, index, key and value each own the constant. |
+| Foreach source | `{foreach App\Lists::ITEMS as $item}` | Source owns the constant. |
+
+Constant-to-call (`::READY` to `::ready()`), qualification and separator-break
+edits match fresh trees. See [Task 052 trees](../test/corpus/namespaced-class-constants.txt),
+[Node checks](../test/namespaced-class-constants.test.mjs) and the
+[implementation evidence](tasks/052-namespaced-class-constants.md#implementation-evidence).

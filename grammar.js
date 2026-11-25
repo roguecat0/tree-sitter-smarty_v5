@@ -580,8 +580,12 @@ export default grammar({
     _modifier_identifier: _ => token(/[0-9]+[a-zA-Z_][a-zA-Z0-9_]*/),
     // Control/primitive words are contextual class names, but self/parent are
     // explicitly rejected by Smarty. Both sides of :: require adjacency.
+    // Namespace-qualified receivers reuse the static-call qualified_name
+    // (Smarty routes both through `ns1 DOUBLECOLON static_class_access`);
+    // the call's higher precedence still claims a following `(`.
     class_constant_expression: $ => prec(8, seq(
       field("class", choice(
+        $.qualified_name,
         reserved("class", $.identifier), alias(choice(...controlWords), $.identifier),
         alias($.boolean, $.identifier), alias($.null, $.identifier),
       )), token.immediate("::"),

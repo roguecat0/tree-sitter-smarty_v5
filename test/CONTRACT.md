@@ -584,6 +584,15 @@ compilation for literal output, without executing plugins. Evidence:
 
 Adjacent static `Class::NAME` values produce `class_constant_expression` with
 `class: (identifier)` and `constant: (identifier)` fields and anonymous `::`.
+Namespace-qualified constants such as `App\Class1::NAME` and `\App\Class1::NAME`
+keep the same node and `constant` field, with `class: (qualified_name)` under
+the same receiver rules as qualified static calls below (rooted one-segment
+names, contextual and digit-prefixed segments, adjacent separators and `::`).
+A following `(` makes the same receiver a static call instead. Qualified
+constants compose wherever unqualified constants do; Task 052 verifies outputs,
+modifier inputs/arguments, `if`/`elseif` conditions, generic-tag positional and
+named values, assignment, arithmetic, method arguments, bracket indices, array
+keys/values and foreach sources.
 Static class method calls such as `Class::method($value)` produce a distinct
 `static_method_call_expression` with `class`, `method`, and repeated `argument`
 fields. Unrooted and rooted namespace-qualified receivers such as
@@ -613,11 +622,11 @@ identifier nodes. Constants compose as primary expressions and modifier
 arguments; `{Class}` stays a generic tag. Whitespace within a qualified
 receiver does not form a qualified call.
 Case-insensitive `self`/`parent` remain excluded as unqualified class
-receivers; they are accepted as namespace segments. Namespaced standalone and
-class constants remain separate gaps, as do dynamic receivers, static
+receivers; they are accepted as namespace segments. Namespaced standalone
+constants remain a separate gap, as do dynamic receivers, static
 properties, constant access suffixes, global constants and runtime symbol
-validation. See Task 048 for the exact boundary and evidence.
+validation. See Tasks 048 and 052 for the exact boundary and evidence.
 Evidence: [constant trees](corpus/class-constants.txt) and
 [reference/field/range/edit checks](class-constants.test.mjs); [static method
 call trees](corpus/static-class-method-calls.txt) and
-[reference/full-engine/recovery/edit checks](static-class-method-calls.test.mjs); [qualified call trees and checks](corpus/namespaced-static-method-calls.txt) and [Task 048 evidence](../docs/tasks/048-namespaced-static-method-calls.md#implementation-evidence).
+[reference/full-engine/recovery/edit checks](static-class-method-calls.test.mjs); [qualified call trees and checks](corpus/namespaced-static-method-calls.txt) and [Task 048 evidence](../docs/tasks/048-namespaced-static-method-calls.md#implementation-evidence). [Qualified constant trees](corpus/namespaced-class-constants.txt), [checks](namespaced-class-constants.test.mjs) and [Task 052 evidence](../docs/tasks/052-namespaced-class-constants.md#implementation-evidence).

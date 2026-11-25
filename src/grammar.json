@@ -7301,6 +7301,10 @@
               "type": "CHOICE",
               "members": [
                 {
+                  "type": "SYMBOL",
+                  "name": "qualified_name"
+                },
+                {
                   "type": "RESERVED",
                   "content": {
                     "type": "SYMBOL",

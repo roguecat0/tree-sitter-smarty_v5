@@ -87,15 +87,29 @@ test('Namespace separator and constant boundaries preserve later output', () => 
     assert.equal(root.descendantsOfType('static_method_call_expression').length > 0, expectCall, root.toString());
     assert.ok(root.namedChildren.some(node => node.text === '{$after}'), root.toString());
   }
+  // Namespaced standalone constants remain a separate gap.
   for (const source of [
     String.raw`{Demo\Assets\VERSION}{$after}`,
-    String.raw`{Demo\Assets\Builder::VERSION}{$after}`,
-    String.raw`{\Demo\Assets::VERSION}{$after}`,
   ]) {
     const root = parser().parse(source).rootNode;
     assert.equal(root.hasError, true, root.toString());
     assert.equal(root.descendantsOfType('static_method_call_expression').length, 0, root.toString());
     assert.ok(root.namedChildren.some(node => node.text === '{$after}'), root.toString());
+    assert.equal(reference(source).error, null, source);
+  }
+  // Task 052 corrected these Smarty-accepted class constants from expected
+  // errors to qualified class constants; they must still never become calls.
+  for (const source of [
+    String.raw`{Demo\Assets\Builder::VERSION}{$after}`,
+    String.raw`{\Demo\Assets::VERSION}{$after}`,
+  ]) {
+    const root = parser().parse(source).rootNode;
+    assert.equal(root.hasError, false, root.toString());
+    assert.equal(root.descendantsOfType('static_method_call_expression').length, 0, root.toString());
+    const value = root.firstNamedChild.childForFieldName('value');
+    assert.equal(value.type, 'class_constant_expression', root.toString());
+    assert.equal(value.childForFieldName('class').type, 'qualified_name');
+    assert.equal(root.namedChildren.at(-1).text, '{$after}');
     assert.equal(reference(source).error, null, source);
   }
   const whitespaceSource = String.raw`{Demo \Assets::build()}`;

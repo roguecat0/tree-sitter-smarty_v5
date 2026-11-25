@@ -207,3 +207,13 @@ smarty-5.8.4-TemplateLexer-digit-prefixed-namespace-segments-rooted
   (output value: (static_method_call_expression
     class: (qualified_name (identifier) (identifier))
     method: (identifier))))
+
+====================
+smarty-5.8.4-TemplateParser-namespace-class-constant
+====================
+{\Demo\Assets::VERSION}
+---
+(source_file
+  (output value: (class_constant_expression
+    class: (qualified_name (identifier) (identifier))
+    constant: (identifier))))

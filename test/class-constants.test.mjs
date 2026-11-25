@@ -45,7 +45,15 @@ test('Constant delimiters adjacency and explicit scope exclusions',()=>{
  for(const name of ['self','SELF','SeLf','parent','PARENT','PaReNt']) {
   const source=`{${name}::READY}`;assert.equal(parser().parse(source).rootNode.hasError,true,source);assert.match(reference(source).error,/static class/);
  }
- for(const source of ['{\\App\\Thing::READY}','{Thing::READY->name}']) {
+ // Task 052 corrected the rooted-namespace expectation: Smarty accepts it and
+ // the parser now keeps the receiver as a qualified_name class field.
+ {
+  const source='{\\App\\Thing::READY}';const root=parser().parse(source).rootNode;
+  assert.equal(reference(source).error,null,source);assert.equal(root.hasError,false,root.toString());
+  const node=root.firstNamedChild.childForFieldName('value');
+  assert.equal(node.type,'class_constant_expression');assert.equal(node.childForFieldName('class').type,'qualified_name');
+ }
+ for(const source of ['{Thing::READY->name}']) {
   assert.equal(reference(source).error,null,source);assert.equal(parser().parse(source).rootNode.hasError,true,source);
  }
  const methodSource='{Thing::READY()}';

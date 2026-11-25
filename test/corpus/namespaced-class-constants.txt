@@ -1,0 +1,269 @@
+==================
+Unrooted namespaced class constant
+==================
+{App\Class1::CONSTANT}
+---
+(source_file
+  (output
+    value: (class_constant_expression
+      class: (qualified_name
+        (identifier)
+        (identifier))
+      constant: (identifier))))
+
+==================
+Rooted namespaced class constant
+==================
+{\App\Class1::CONSTANT}
+---
+(source_file
+  (output
+    value: (class_constant_expression
+      class: (qualified_name
+        (identifier)
+        (identifier))
+      constant: (identifier))))
+
+==================
+Rooted one-segment class constant
+==================
+{\Demo::VERSION}
+---
+(source_file
+  (output
+    value: (class_constant_expression
+      class: (qualified_name
+        (identifier))
+      constant: (identifier))))
+
+==================
+Contextual namespace segments and constant name
+==================
+{Demo\if\true\self\parent::for}
+---
+(source_file
+  (output
+    value: (class_constant_expression
+      class: (qualified_name
+        (identifier)
+        (identifier)
+        (identifier)
+        (identifier)
+        (identifier))
+      constant: (identifier))))
+
+==================
+Digit-prefixed namespaced constant segments
+==================
+{1Demo\2Assets::VERSION}{\1Demo\Assets::VERSION}
+---
+(source_file
+  (output
+    value: (class_constant_expression
+      class: (qualified_name
+        (identifier)
+        (identifier))
+      constant: (identifier)))
+  (output
+    value: (class_constant_expression
+      class: (qualified_name
+        (identifier)
+        (identifier))
+      constant: (identifier))))
+
+==================
+Namespaced constant as modifier input and arguments
+==================
+{Demo\Assets::VERSION|escape}{$x|replace:Demo\A::FROM:\Demo\A::TO}
+---
+(source_file
+  (output
+    value: (modifier_expression
+      value: (class_constant_expression
+        class: (qualified_name
+          (identifier)
+          (identifier))
+        constant: (identifier))
+      name: (identifier)))
+  (output
+    value: (modifier_expression
+      value: (variable
+        name: (identifier))
+      name: (identifier)
+      argument: (class_constant_expression
+        class: (qualified_name
+          (identifier)
+          (identifier))
+        constant: (identifier))
+      argument: (class_constant_expression
+        class: (qualified_name
+          (identifier)
+          (identifier))
+        constant: (identifier)))))
+
+==================
+Namespaced constants in if and elseif conditions
+==================
+{if $status == App\State::READY}Y{elseif \App\State::DONE}D{/if}
+---
+(source_file
+  (if_block
+    (if_tag
+      condition: (binary_expression
+        left: (variable
+          name: (identifier))
+        right: (class_constant_expression
+          class: (qualified_name
+            (identifier)
+            (identifier))
+          constant: (identifier))))
+    (text)
+    (elseif_clause
+      (elseif_tag
+        condition: (class_constant_expression
+          class: (qualified_name
+            (identifier)
+            (identifier))
+          constant: (identifier)))
+      (text))
+    (if_close_tag)))
+
+==================
+Namespaced constants in generic tag values
+==================
+{widget App\State::READY value=\App\State::READY|escape}{/widget}
+---
+(source_file
+  (custom_tag
+    name: (identifier)
+    argument: (class_constant_expression
+      class: (qualified_name
+        (identifier)
+        (identifier))
+      constant: (identifier))
+    (attribute
+      name: (identifier)
+      value: (modifier_expression
+        value: (class_constant_expression
+          class: (qualified_name
+            (identifier)
+            (identifier))
+          constant: (identifier))
+        name: (identifier))))
+  (custom_close_tag
+    name: (identifier)))
+
+==================
+Namespaced constant assignment value
+==================
+{$x = App\State::READY}
+---
+(source_file
+  (assignment_tag
+    target: (variable
+      name: (identifier))
+    value: (class_constant_expression
+      class: (qualified_name
+        (identifier)
+        (identifier))
+      constant: (identifier))))
+
+==================
+Namespaced constant arithmetic precedence
+==================
+{App\State::READY + 2 * \App\State::RATE}
+---
+(source_file
+  (output
+    value: (binary_expression
+      left: (class_constant_expression
+        class: (qualified_name
+          (identifier)
+          (identifier))
+        constant: (identifier))
+      right: (binary_expression
+        left: (number)
+        right: (class_constant_expression
+          class: (qualified_name
+            (identifier)
+            (identifier))
+          constant: (identifier))))))
+
+==================
+Namespaced constants in arguments, index and array
+==================
+{$user->find(App\State::ready, true)}{$rows[App\State::READY]}{[App\State::KEY=>\App\State::READY]}
+---
+(source_file
+  (output
+    value: (method_call_expression
+      object: (variable
+        name: (identifier))
+      method: (identifier)
+      argument: (class_constant_expression
+        class: (qualified_name
+          (identifier)
+          (identifier))
+        constant: (identifier))
+      argument: (boolean)))
+  (output
+    value: (index_expression
+      object: (variable
+        name: (identifier))
+      index: (class_constant_expression
+        class: (qualified_name
+          (identifier)
+          (identifier))
+        constant: (identifier))))
+  (output
+    value: (array_literal
+      (array_element
+        key: (class_constant_expression
+          class: (qualified_name
+            (identifier)
+            (identifier))
+          constant: (identifier))
+        value: (class_constant_expression
+          class: (qualified_name
+            (identifier)
+            (identifier))
+          constant: (identifier))))))
+
+==================
+Namespaced constant foreach source
+==================
+{foreach App\Lists::ITEMS as $item}{$item}{/foreach}
+---
+(source_file
+  (foreach_block
+    (foreach_tag
+      source: (class_constant_expression
+        class: (qualified_name
+          (identifier)
+          (identifier))
+        constant: (identifier))
+      item: (variable
+        name: (identifier)))
+    (output
+      value: (variable
+        name: (identifier)))
+    (foreach_close_tag)))
+
+==================
+Namespaced constant beside namespaced call
+==================
+{Demo\Assets::VERSION}{Demo\Assets::build()}
+---
+(source_file
+  (output
+    value: (class_constant_expression
+      class: (qualified_name
+        (identifier)
+        (identifier))
+      constant: (identifier)))
+  (output
+    value: (static_method_call_expression
+      class: (qualified_name
+        (identifier)
+        (identifier))
+      method: (identifier))))
